@@ -1,7 +1,7 @@
 // var apiUrl = 'http://192.168.11.121:4000/v1/popup-entity?shop=fusionfirm.myshopify.com'
 
 var apiUrl =
-  "https://6437-182-163-107-41.ngrok-free.app/v1/popup-entity?shop=fusionfirm.myshopify.com";
+  "https://e31b-182-163-107-41.ngrok-free.app/v1/popup-entity?shop=fusionfirm.myshopify.com";
 window.document.onload = function (e) {
   console.log(
     "document.onload",
