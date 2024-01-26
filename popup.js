@@ -1,10 +1,12 @@
-// var apiUrl = 'http://192.168.11.121:4000/v1/popup-entity?shop=fusionfirm.myshopify.com'
+//var apiUrl = 'http://192.168.11.121:4000/v1/popup-entity?shop=fusionfirm.myshopify.com'
 
 var apiUrl =
-  "https://e31b-182-163-107-41.ngrok-free.app/v1/popup-entity?shop=fusionfirm.myshopify.com";
+  "https://3880-182-163-107-41.ngrok-free.app/v1/popup-entity?shop=fusionfirm.myshopify.com";
 
 // Attach event listener to the close button
 
+var popups = [];
+var idleTime = 0;
 window.document.onload = function (e) {
   console.log(
     "document.onload",
@@ -15,12 +17,62 @@ window.document.onload = function (e) {
   );
 };
 window.onload = function (e) {
+  var idleInterval = setInterval(timerIncrement, 60000);
   getPopupInformation();
-  // console.log('data',data);
+
+  document.onmousemove = function (e) {
+    idleTime = 0;
+  };
+
+  $(document).keypress(function (e) {
+    idleTime = 0;
+  });
+
+  const body = document.querySelector("body");
+  let mouseY;
+  body.addEventListener("mouseleave", (event) => {
+    mouseY = event.clientY;
+    console.log("y", mouseY);
+    if (mouseY < 0) {
+      console.log("Exit Intent");
+      showPopups();
+      // add additional code for exit intent here
+    }
+  });
+
   //writeDom(data);
 };
 
-function createPopup(text, i) {
+window.addEventListener("beforeunload", function (e) {
+  //handleExitEvent();
+  showPopups();
+});
+
+$(window).on("scroll", function () {
+  var s = $(window).scrollTop(),
+    d = $(document).height(),
+    c = $(window).height();
+
+  var scrollPercent = (s / (d - c)) * 100;
+
+  console.clear();
+  console.log(scrollPercent);
+
+  if (scrollPercent > 15) {
+    if (popups.length > 0) {
+      for (var i = 0; i < popups.length; i++) {
+        var rules = popups[i].rules;
+        for (var j = 0; j < rules.length; j++) {
+          if (rules[j].sequenceNumber == 2 && rules[j].status === "active") {
+            showPopup(i);
+          }
+        }
+      }
+    }
+  }
+});
+
+function createPopup(data, i) {
   var popup = document.createElement("div");
   popup.id = "popup" + i;
   popup.style.display = "none";
@@ -33,7 +85,7 @@ function createPopup(text, i) {
   closeBtn.style.top = "5px";
   closeBtn.style.right = "5px";
   closeBtn.style.cursor = "pointer";
-  popup.style.display = "block";
+  //popup.style.display = "block";
   popup.style.position = "fixed";
   popup.style.top = "50%";
   popup.style.left = "50%";
@@ -53,7 +105,7 @@ function createPopup(text, i) {
   closeBtn.style.cursor = "pointer";
 
   var content = document.createElement("p");
-  content.innerHTML = text;
+  content.innerHTML = data.text;
 
   popup.appendChild(closeBtn);
   popup.appendChild(content);
@@ -66,6 +118,20 @@ function createPopup(text, i) {
     },
     false
   );
+
+  var rules = data.rules;
+  var displayOnStart = false;
+  for (var j = 0; j < rules.length; j++) {
+    if (rules[j].sequenceNumber == 1 && rules[j].status === "active") {
+      setTimeout(function () {
+        showPopup(i);
+      }, rules[j].value * 1000);
+      displayOnStart = true;
+    }
+    if (rules[j].sequenceNumber == 2 && rules[j].status === "active") {
+      displayOnStart = true;
+    }
+  }
 }
 
 async function getPopupInformation() {
@@ -89,9 +155,18 @@ async function getPopupInformation() {
     })
     .then((data) => {
       console.log(JSON.stringify(data, null, 2));
+      popups = data.data;
+
       writeDom(data);
 
-      //return data;
+      const body = document.querySelector("body");
+      let mouseY;
+
+      body.addEventListener("mouseleave", (event) => {
+        mouseY = event.clientY;
+        if (mouseY < 0) {
+        }
+      });
     })
     .catch((error) => {
       console.error("Error:", error);
@@ -101,7 +176,7 @@ async function getPopupInformation() {
 function writeDom(data) {
   for (var i = 0; i < data.data.length; i++) {
     if (data.data[i].text) {
-      createPopup(data.data[i].text, i);
+      createPopup(data.data[i], i);
     }
   }
 }
@@ -111,7 +186,61 @@ function hidePopup(i) {
   document.getElementById("popup" + i).style.display = "none";
 }
 
+function showPopup(i) {
+  document.getElementById("popup" + i).style.display = "block";
+}
+
+function handleExitIntent() {
+  body.addEventListener("mouseleave", (event) => {
+    mouseY = event.clientY;
+    if (mouseY < 16) {
+      console.log("Exit Intent");
+      // add additional code for exit intent here
+
+      if (popups.length > 0) {
+        for (var i = 0; i < popups.length; i++) {
+          var rules = popups[i].rules;
+          for (var j = 0; j < rules.length; j++) {
+            if (rules[j].sequenceNumber == 3 && rules[j].status === "active") {
+              showPopup(i);
+            }
+          }
+        }
+      }
+    }
+  });
+}
 // Create the popup dynamically
 
 // Call the showPopup function when the page loads
 //window.onload = showPopup;
+function timerIncrement() {
+  idleTime = idleTime + 1;
+  if (idleTime > 1) {
+    // 20 minutes
+    //window.location.reload();
+    if (popups.length > 0) {
+      for (var i = 0; i < popups.length; i++) {
+        var rules = popups[i].rules;
+        for (var j = 0; j < rules.length; j++) {
+          if (rules[j].sequenceNumber == 4 && rules[j].status === "active") {
+            showPopup(i);
+          }
+        }
+      }
+    }
+  }
+}
+
+function showPopups() {
+  if (popups.length > 0) {
+    for (var i = 0; i < popups.length; i++) {
+      var rules = popups[i].rules;
+      for (var j = 0; j < rules.length; j++) {
+        if (rules[j].sequenceNumber == 3 && rules[j].status === "active") {
+          showPopup(i);
+        }
+      }
+    }
+  }
+}
