@@ -325,6 +325,9 @@ function populateMap(data2, i) {
 
 function createPopup(data, i) {
   var popup = document.createElement("div");
+  popup.style.position = "fixed";
+  popup.style.top = "50%";
+  popup.style.left = "50%";
   popup.id = "popup" + i;
   //popup.style.display = "none";
 
