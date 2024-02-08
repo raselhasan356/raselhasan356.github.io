@@ -223,7 +223,9 @@ function populateMap(data2, i) {
   let template1 =
     "<div " +
     'style="' +
-    "position: relative;" +
+    "position: fixed;" +
+    "top: 50%;" +
+    "left: 50%;" +
     "display: grid;" +
     "grid-template-columns: 1fr 1fr;" +
     "background-color: #ff7f4d;" +
@@ -326,9 +328,9 @@ function populateMap(data2, i) {
 function createPopup(data, i) {
   var popup = document.createElement("div");
   popup.id = "popup" + i;
-  popup.style.position = "absolute";
-  popup.style.top = "50%";
-  popup.style.left = "50%";
+  //popup.style.position = "absolute";
+  //popup.style.top = "50%";
+  //popup.style.left = "50%";
   //popup.style.display = "none";
 
   /* var closeBtn = document.createElement("span");
