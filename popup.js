@@ -239,7 +239,10 @@ function populateMap(data2, i) {
     " " +
     ' style="display: flex; flex-direction: column; gap: 1rem; padding: 1rem"' +
     ">" +
-    ' <div style="position: absolute; right: 0.75rem; top: 0.75rem">' +
+    ' <div id ="close' +
+    i +
+    '"' +
+    ' style="position: absolute; right: 0.75rem; top: 0.75rem">' +
     "<svg" +
     " " +
     'width="16"' +
@@ -390,9 +393,13 @@ function createPopup(data, i) {
   //popup.appendChild(content);
 
   document.body.appendChild(popup);
-  /*  document.getElementById("closeBtn" + i).addEventListener("click", function () {
-    hidePopup(i);
-  }, false); */
+  document.getElementById("close" + i).addEventListener(
+    "click",
+    function () {
+      hidePopup(i);
+    },
+    false
+  );
 
   document.getElementById("submitButtonFieldText" + i).addEventListener(
     "click",
