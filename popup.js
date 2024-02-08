@@ -325,10 +325,10 @@ function populateMap(data2, i) {
 
 function createPopup(data, i) {
   var popup = document.createElement("div");
-  popup.style["align-items"] = "center";
-  popup.style.display = "flex";
-  popup.style["justify-content"] = "center";
   popup.id = "popup" + i;
+  popup.style.position = "fixed";
+  popup.style.top = "50%";
+  popup.style.left = "50%";
   //popup.style.display = "none";
 
   /* var closeBtn = document.createElement("span");
@@ -458,6 +458,7 @@ async function getPopupInformation() {
       writeDom(popups);
 
       const body = document.querySelector("body");
+      body.style.position = "absolute";
       let mouseY;
 
       body.addEventListener("mouseleave", (event) => {
