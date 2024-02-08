@@ -328,6 +328,12 @@ function populateMap(data2, i) {
 function createPopup(data, i) {
   var popup = document.createElement("div");
   popup.id = "popup" + i;
+
+  popup.style.position = "fixed";
+  popup.style.top = "50%";
+  popup.style.left = "50%";
+  popup.style.transform = "translate(-50%, -50%)";
+  popup.style.zIndex = "999";
   //popup.style.position = "absolute";
   //popup.style.top = "50%";
   //popup.style.left = "50%";
