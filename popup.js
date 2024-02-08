@@ -460,7 +460,7 @@ async function getPopupInformation() {
       writeDom(popups);
 
       const body = document.querySelector("body");
-      body.style.position = "relative";
+      //body.style.position = "relative";
       let mouseY;
 
       body.addEventListener("mouseleave", (event) => {
