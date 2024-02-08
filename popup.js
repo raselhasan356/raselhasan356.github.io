@@ -223,9 +223,6 @@ function populateMap(data2, i) {
   let template1 =
     "<div " +
     'style="' +
-    "position: fixed;" +
-    "top: 50%;" +
-    "left: 50%;" +
     "display: grid;" +
     "grid-template-columns: 1fr 1fr;" +
     "background-color: #ff7f4d;" +
