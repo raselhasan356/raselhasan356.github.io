@@ -1,9 +1,9 @@
-//var apiUrl = 'http://192.168.8.95:4000/v1/popup-entity?shop=fusionfirm.myshopify.com'
+//var apiUrl = 'http://192.168.9.65:4000/v1/popup-entity?shop=fusionfirm.myshopify.com'
 var submitUrl =
-  "https://87ff-182-163-107-41.ngrok-free.app/v1/leads/generate-lead?shop=fusionfirm.myshopify.com";
+  "https://1da3-175-29-198-242.ngrok-free.app/v1/leads/generate-lead?shop=fusionfirm.myshopify.com";
 
 var apiUrl =
-  "https://87ff-182-163-107-41.ngrok-free.app/v1/popup-entity?shop=fusionfirm.myshopify.com";
+  "https://1da3-175-29-198-242.ngrok-free.app/v1/popup-entity?shop=fusionfirm.myshopify.com";
 
 // Attach event listener to the close button
 
@@ -225,7 +225,9 @@ function populateMap(data2, i) {
     data2.background.color +
     ";" +
     "box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);" +
-    "max-width: 450px;" +
+      "height: 335px;" +
+      "width: 575px;" +
+      // "max-width: 450px;" +
     "font-family: 'DM Sans', sans-serif;\"" +
     ">" +
     "<div " +
