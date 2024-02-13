@@ -438,7 +438,7 @@ function populateMap(data2, i) {
     "/>" +
     "</div>" +
     "<div style='margin-bottom: -5px'>" +
-    '<div style="font-size: 0.875rem; font-family: DM Sans; color: #000; text-align: left; margin: -2px 0 5px 2px;">' +
+    '<div style="font-size: 14px; font-family: DM Sans; color: #000; text-align: left; margin: -2px 0 5px 2px;">' +
     "$input2Label" +
     "</div>" +
     "<input" +
@@ -465,7 +465,7 @@ function populateMap(data2, i) {
     buttonStyle +
     " " +
     ">" +
-    '<div style="font-size: 0.875rem; color: #fff; text-align: center">' +
+    '<div style="font-size: 14px; color: #fff; text-align: center">' +
     "$buttonText" +
     " </div>" +
     "</button>" +
