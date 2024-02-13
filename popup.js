@@ -45,6 +45,8 @@ function setApi() {
   //var first =  browserUrl.charAt('https://');
 
   console.log(browserUrl);
+  apiUrl = apiUrl + browserUrl;
+  submitUrl = submitUrl + browserUrl;
 }
 
 window.onload = function (e) {
