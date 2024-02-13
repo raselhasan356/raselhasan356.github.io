@@ -1,10 +1,6 @@
-var apiUrl =
-  "http://192.168.9.65:4000/v1/popup-entity?shop=fusionfirm.myshopify.com";
+var apiUrl = "https://016e-175-29-198-242.ngrok-free.app/v1/popup-entity?shop=";
 var submitUrl =
-  "https://87ff-182-163-107-41.ngrok-free.app/v1/leads/generate-lead?shop=quickstart-bdb585f9.myshopify.com";
-
-var submitUrl =
-  "http://http://192.168.9.65:4000/v1/leads/generate-lead?shop=quickstart-bdb585f9.myshopify.com";
+  "https://016e-175-29-198-242.ngrok-free.app/v1/leads/generate-lead?shop=";
 
 /* var apiUrl =
   "https://87ff-182-163-107-41.ngrok-free.app/v1/popup-entity?shop=quickstart-bdb585f9.myshopify.com";
@@ -41,7 +37,7 @@ window.document.onload = function (e) {
 };
 
 function setApi() {
-  let browserUrl = "https://fusionfirm.myshopify.com/password";
+  let browserUrl = window.location.href;
   browserUrl = browserUrl.replace("https://", "");
 
   browserUrl = browserUrl.substring(0, browserUrl.indexOf("/"));
