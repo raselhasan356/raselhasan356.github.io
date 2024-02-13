@@ -115,14 +115,14 @@ window.onload = function (e) {
     //return "You have attempted to leave this page.  If you have made any changes to the fields without clicking the Save button, your changes will be lost.  Are you sure you want to exit this page?";
   }
  */
-window.addEventListener("beforeunload", function (e) {
+/* window.addEventListener("beforeunload", function (e) {
   e.preventDefault();
   showPopups();
 
   setTimeout(function () {
     //your code to be executed after 1 second
   }, 10000);
-});
+}); */
 
 $(window).on("scroll", function () {
   var s = $(window).scrollTop(),
