@@ -1,17 +1,35 @@
-//var apiUrl = 'http://192.168.8.95:4000/v1/popup-entity?shop=fusionfirm.myshopify.com'
+var apiUrl =
+  "http://192.168.9.65:4000/v1/popup-entity?shop=fusionfirm.myshopify.com";
 var submitUrl =
   "https://87ff-182-163-107-41.ngrok-free.app/v1/leads/generate-lead?shop=quickstart-bdb585f9.myshopify.com";
 
-var apiUrl =
-  "https://87ff-182-163-107-41.ngrok-free.app/v1/popup-entity?shop=quickstart-bdb585f9.myshopify.com";
+var submitUrl =
+  "http://http://192.168.9.65:4000/v1/leads/generate-lead?shop=quickstart-bdb585f9.myshopify.com";
 
+/* var apiUrl =
+  "https://87ff-182-163-107-41.ngrok-free.app/v1/popup-entity?shop=quickstart-bdb585f9.myshopify.com";
+ */
 // Attach event listener to the close button
 
 var templateMap = new Map();
 var shop = "quickstart-bdb585f9";
+var shownOn25 = 0;
+var shownOn50 = 0;
+var shownOn75 = 0;
+var shownOn100 = 0;
+var shownOnLeave = false;
+var shownOnInactivity = 0;
 
 var popups = [];
 var idleTime = 0;
+var addEvent = function (obj, evt, fn) {
+  if (obj.addEventListener) {
+    obj.addEventListener(evt, fn, false);
+  } else if (obj.attachEvent) {
+    obj.attachEvent("on" + evt, fn);
+  }
+};
+
 window.document.onload = function (e) {
   console.log(
     "document.onload",
@@ -21,8 +39,24 @@ window.document.onload = function (e) {
     (window.tdiff[0] = Date.now()) && window.tdiff.reduce(fred)
   );
 };
+
+function setApi() {
+  let browserUrl = "https://fusionfirm.myshopify.com/password";
+  browserUrl = browserUrl.replace("https://", "");
+
+  browserUrl = browserUrl.substring(0, browserUrl.indexOf("/"));
+  console.log(browserUrl);
+  //var first =  browserUrl.charAt('https://');
+
+  console.log(browserUrl);
+}
+
 window.onload = function (e) {
   // var idleInterval = setInterval(timerIncrement, 60000);
+  //let browserUrl = window.location.href;
+
+  var idleInterval = setInterval(timerIncrement, 60000);
+  setApi();
   getPopupInformation();
 
   document.onmousemove = function (e) {
@@ -35,7 +69,7 @@ window.onload = function (e) {
 
   const body = document.querySelector("body");
   let mouseY;
-  $(document).mouseleave(function () {
+  /*  $(document).mouseleave(function () {
     console.log("out");
     showPopups();
   });
@@ -47,15 +81,50 @@ window.onload = function (e) {
       showPopups();
       // add additional code for exit intent here
     }
-  });
+  }); */
 
   //writeDom(data);
+
+  addEvent(document, "mouseout", function (event) {
+    event = event ? event : window.event;
+    var from = event.relatedTarget || event.toElement;
+    if ((!from || from.nodeName == "HTML") && event.clientY <= 100) {
+      //alert("left top bar");mo
+      if (popups.length > 0 && !shownOnLeave) {
+        for (var i = 0; i < popups.length; i++) {
+          var rules = popups[i].rules;
+          for (var j = 0; j < rules.length; j++) {
+            if (rules[j].sequenceNumber == 3 && rules[j].status === "active") {
+              showPopup(i);
+              shownOnLeave = true;
+            }
+          }
+        }
+      }
+    }
+  });
 };
 
 // window.addEventListener("beforeunload", function (e) {
 //   //handleExitEvent();
 //   showPopups();
 // });
+
+/* window.onbeforeunload = confirmExit;
+  function confirmExit()
+  {
+    showPopups();
+    //return "You have attempted to leave this page.  If you have made any changes to the fields without clicking the Save button, your changes will be lost.  Are you sure you want to exit this page?";
+  }
+ */
+window.addEventListener("beforeunload", function (e) {
+  e.preventDefault();
+  showPopups();
+
+  setTimeout(function () {
+    //your code to be executed after 1 second
+  }, 10000);
+});
 
 $(window).on("scroll", function () {
   var s = $(window).scrollTop(),
@@ -64,16 +133,88 @@ $(window).on("scroll", function () {
 
   var scrollPercent = (s / (d - c)) * 100;
 
-  console.clear();
+  // console.clear();
   console.log(scrollPercent);
 
-  if (scrollPercent > 15) {
+  if (scrollPercent >= 25 && scrollPercent < 26 && shownOn25 <= 2) {
+    //console.log(alert('scroll 25'));
     if (popups.length > 0) {
+      var s25 = false;
       for (var i = 0; i < popups.length; i++) {
         var rules = popups[i].rules;
         for (var j = 0; j < rules.length; j++) {
-          if (rules[j].sequenceNumber == 2 && rules[j].status === "active") {
+          if (
+            rules[j].sequenceNumber == 2 &&
+            rules[j].status === "active" &&
+            rules[j].value == 25
+          ) {
             showPopup(i);
+            if (!s25) shownOn25++;
+            s25 = true;
+          }
+        }
+      }
+    }
+  }
+
+  if (scrollPercent >= 50 && scrollPercent < 52 && shownOn50 <= 2) {
+    //console.log(alert('scroll 25'));
+    if (popups.length > 0) {
+      var s50 = false;
+      for (var i = 0; i < popups.length; i++) {
+        var rules = popups[i].rules;
+
+        for (var j = 0; j < rules.length; j++) {
+          if (
+            rules[j].sequenceNumber == 2 &&
+            rules[j].status === "active" &&
+            rules[j].value == 50
+          ) {
+            showPopup(i);
+            if (!s50) shownOn50++;
+            s50 = true;
+          }
+        }
+      }
+    }
+  }
+
+  if (scrollPercent >= 75 && scrollPercent < 77 && shownOn75 <= 2) {
+    //console.log(alert('scroll 25'));
+    if (popups.length > 0) {
+      var s75 = false;
+      for (var i = 0; i < popups.length; i++) {
+        var rules = popups[i].rules;
+        for (var j = 0; j < rules.length; j++) {
+          if (
+            rules[j].sequenceNumber == 2 &&
+            rules[j].status === "active" &&
+            rules[j].value == 75
+          ) {
+            showPopup(i);
+            if (!s75) shownOn75++;
+            s75 = true;
+          }
+        }
+      }
+    }
+  }
+
+  if (scrollPercent >= 95 && scrollPercent <= 100 && shownOn100 <= 2) {
+    //console.log(alert('scroll 25'));
+    if (popups.length > 0) {
+      var s100 = false;
+      for (var i = 0; i < popups.length; i++) {
+        var rules = popups[i].rules;
+        for (var j = 0; j < rules.length; j++) {
+          if (
+            rules[j].sequenceNumber == 2 &&
+            rules[j].status === "active" &&
+            rules[j].value == 100
+          ) {
+            showPopup(i);
+            if (!s100) shownOn100++;
+            s100 = true;
           }
         }
       }
@@ -83,49 +224,58 @@ $(window).on("scroll", function () {
 
 function populateMap(data2, i) {
   /*   let data2 = {
-    background: {
-        color: "#4343",
-        image_url: "test.jpg"
-    },
-    headingField: {
-        textAlignment: "left",
-        textContent: 'Newsletter',
-        fontColor: 'black',
-        fontFamily: 'dmSans',
-        fontSize: '24'
-    },
-    inputFieldLabel01: {
-        textAlignment: 'left',
-        textContent: 'Newsletter',
-        fontColor: 'black',
-        fontFamily: 'dmSans',
-        fontSize: '24'
-    },
-    inputFieldLabel02: {
-        textAlignment: 'left',
-        textContent: 'Newsletter',
-        fontColor: 'black',
-        fontFamily: 'dmSans',
-        fontSize: '24'
-    },
-    submitButtonField: {
-        textAlignment: 'left',
-        textContent: 'Newsletter',
-        fontColor: 'black',
-        fontFamily: 'dmSans',
-        fontSize: '24'
-    }
-} */
+      background: {
+          color: "#4343",
+          image_url: "test.jpg"
+      },
+      headingField: {
+          textAlignment: "left",
+          textContent: 'Newsletter',
+          fontColor: 'black',
+          fontFamily: 'dmSans',
+          fontSize: '24'
+      },
+      inputFieldLabel01: {
+          textAlignment: 'left',
+          textContent: 'Newsletter',
+          fontColor: 'black',
+          fontFamily: 'dmSans',
+          fontSize: '24'
+      },
+      inputFieldLabel02: {
+          textAlignment: 'left',
+          textContent: 'Newsletter',
+          fontColor: 'black',
+          fontFamily: 'dmSans',
+          fontSize: '24'
+      },
+      submitButtonField: {
+          textAlignment: 'left',
+          textContent: 'Newsletter',
+          fontColor: 'black',
+          fontFamily: 'dmSans',
+          fontSize: '24'
+      }
+  } */
+
+  let fontLink = document.createElement("link");
+  fontLink.setAttribute("rel", "stylesheet");
+  // fontLink.setAttribute('href', 'https://fonts.googleapis.com/css2?family=' + convertToTitleCaseWithPlus(data2.headingField.fontFamily));
+  fontLink.setAttribute(
+    "href",
+    "https://fonts.googleapis.com/css2?family=DM+Sans"
+  );
+  document.head.appendChild(fontLink);
 
   let bgStyle =
     "display: flex;" +
     "flex-direction: column;" +
     "align-items: center;" +
     "padding: 1.5rem;" +
-    "background-color:" +
-    " " +
-    data2.background.color +
-    ";" +
+    // "background-color:" +
+    // " " +
+    // data2.background.color +
+    // ";" +
     "background-image: url(" +
     data2.background_image +
     ")" +
@@ -138,13 +288,16 @@ function populateMap(data2, i) {
     "overflow: hidden;";
 
   let headingStyle =
-    "border-bottom: 3px solid rgb(41, 49, 60);" +
+    "border-bottom: 2px solid rgb(23 23 63);" +
     "font-weight: 800;" +
-    "margin-bottom: 1rem;" +
-    "margin-top: 1.5rem;" +
-    "padding-bottom: 0.5rem;" +
+    "letter-spacing: 1px;" +
+    "margin: 26px 0 0;" +
+    "padding: 0 0 6px 3px;" +
     "font-size: " +
     data2.headingField.fontSize +
+    "px;" +
+    "font-family: " +
+    convertToTitleCaseWithSpace(data2.headingField.fontFamily) +
     ";" +
     "color: " +
     data2.headingField.fontColor +
@@ -159,7 +312,7 @@ function populateMap(data2, i) {
     "width: 100%;" +
     "border-radius: 0.375rem;" +
     "border: 1px solid #a0aec0;" +
-    "background-color: 222.2 47.4% 11.2%ii;" +
+    "background-color: #fff;" +
     "padding-left: 0.75rem;" +
     "padding-right: 0.75rem;" +
     "padding-top: 0.5rem;" +
@@ -167,10 +320,10 @@ function populateMap(data2, i) {
     "font-size:" +
     " " +
     data2.inputFieldLabel01.fontSize +
-    ";" +
+    "px;" +
     "outline: none;" +
     "transition: border-color 0.15s ease-in-out;" +
-    ' box-sizing: border-box;"';
+    "box-sizing: border-box;";
 
   let input2Style =
     " display: flex;" +
@@ -178,7 +331,7 @@ function populateMap(data2, i) {
     "width: 100%;" +
     "border-radius: 0.375rem;" +
     "border: 1px solid #a0aec0;" +
-    "background-color: 222.2 47.4% 11.2%ii;" +
+    "background-color: #fff;" +
     "padding-left: 0.75rem;" +
     "padding-right: 0.75rem;" +
     "padding-top: 0.5rem;" +
@@ -186,7 +339,7 @@ function populateMap(data2, i) {
     "font-size:" +
     " " +
     data2.inputFieldLabel02.fontSize +
-    ";" +
+    "px;" +
     "outline: none;" +
     "transition: border-color 0.15s ease-in-out;" +
     " box-sizing: border-box;";
@@ -208,12 +361,11 @@ function populateMap(data2, i) {
     "color: #fff;" +
     "&:hover {" +
     "background-color: rgba(0, 0, 0, 0.9);" +
-    "}" +
-    "padding-left: 1rem;" +
-    "padding-right: 1rem;" +
-    "padding-top: 0.5rem;" +
-    "padding-bottom: 0.5rem;" +
-    "width: 6rem;" +
+    "};" +
+    // "padding-left: 1rem;" +
+    // "padding-right: 1rem;" +
+    "width: 96px;" +
+    "height: 40px;" +
     '"';
 
   let template1 =
@@ -224,8 +376,10 @@ function populateMap(data2, i) {
     "background-color: " +
     data2.background.color +
     ";" +
-    "box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);" +
-    "max-width: 450px;" +
+    "box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);" +
+    "height: 335px;" +
+    "width: 575px;" +
+    "max-height: auto;" +
     "font-family: 'DM Sans', sans-serif;\"" +
     ">" +
     "<div " +
@@ -235,7 +389,7 @@ function populateMap(data2, i) {
     "></div>" +
     "<div" +
     " " +
-    ' style="display: flex; flex-direction: column; gap: 1rem; padding: 1rem"' +
+    ' style="display: flex; flex-direction: column; gap: 1.25rem; padding: 16px 16px 24px"' +
     ">" +
     ' <div id = "close' +
     i +
@@ -273,7 +427,7 @@ function populateMap(data2, i) {
     "$header" +
     "</div>" +
     "<div>" +
-    '<div style="font-size: 14px; color: #000; text-align: left">' +
+    '<div style="font-size: 14px; font-family: DM Sans; color: #000; text-align: left; margin: 11px 0 5px 2px">' +
     "$input1Label" +
     "</div>" +
     '<input id="input1' +
@@ -285,8 +439,8 @@ function populateMap(data2, i) {
     ' placeholder="Enter here"' +
     "/>" +
     "</div>" +
-    "<div>" +
-    '<div style="font-size: 0.875rem; color: #000; text-align: left">' +
+    "<div style='margin-bottom: -5px'>" +
+    '<div style="font-size: 0.875rem; font-family: DM Sans; color: #000; text-align: left; margin: -2px 0 5px 2px;">' +
     "$input2Label" +
     "</div>" +
     "<input" +
@@ -296,7 +450,7 @@ function populateMap(data2, i) {
     " " +
     'style="' +
     input2Style +
-    '"' +
+    '" ' +
     'placeholder="Enter here"' +
     "/>" +
     "</div>" +
@@ -313,7 +467,7 @@ function populateMap(data2, i) {
     buttonStyle +
     " " +
     ">" +
-    '<div style="font-size: 0.875rem; color: #fff; text-align: left">' +
+    '<div style="font-size: 0.875rem; color: #fff; text-align: center">' +
     "$buttonText" +
     " </div>" +
     "</button>" +
@@ -335,32 +489,32 @@ function createPopup(data, i) {
   popup.style.display = "none";
 
   /* var closeBtn = document.createElement("span");
-  closeBtn.id = "closeBtn" + i;
-  closeBtn.innerHTML = "&times;";
-  closeBtn.onclick = hidePopup;
-  closeBtn.style.position = "absolute";
-  closeBtn.style.top = "5px";
-  closeBtn.style.right = "5px";
-  closeBtn.style.cursor = "pointer";
-  //popup.style.display = "block";
-  popup.style.position = "fixed";
-  popup.style.top = "50%";
-  popup.style.left = "50%";
-  popup.style.transform = "translate(-50%, -50%)";
-  popup.style.padding = "20px";
-  popup.style.backgroundColor = "#0acf73";
-  popup.style.border = "1px solid #ccc";
-  popup.style.borderRadius = "8px";
-  popup.style.boxShadow = "0 0 10px rgba(0, 0, 0, 0.3)";
-  popup.style.zIndex = "999";
+    closeBtn.id = "closeBtn" + i;
+    closeBtn.innerHTML = "&times;";
+    closeBtn.onclick = hidePopup;
+    closeBtn.style.position = "absolute";
+    closeBtn.style.top = "5px";
+    closeBtn.style.right = "5px";
+    closeBtn.style.cursor = "pointer";
+    //popup.style.display = "block";
+    popup.style.position = "fixed";
+    popup.style.top = "50%";
+    popup.style.left = "50%";
+    popup.style.transform = "translate(-50%, -50%)";
+    popup.style.padding = "20px";
+    popup.style.backgroundColor = "#0acf73";
+    popup.style.border = "1px solid #ccc";
+    popup.style.borderRadius = "8px";
+    popup.style.boxShadow = "0 0 10px rgba(0, 0, 0, 0.3)";
+    popup.style.zIndex = "999";
 
-  // Apply styles for the close button
-  //var closeBtn = document.getElementById("closeBtn");
-  closeBtn.style.position = "absolute";
-  closeBtn.style.top = "5px";
-  closeBtn.style.right = "5px";
-  closeBtn.style.cursor = "pointer";
-   */
+    // Apply styles for the close button
+    //var closeBtn = document.getElementById("closeBtn");
+    closeBtn.style.position = "absolute";
+    closeBtn.style.top = "5px";
+    closeBtn.style.right = "5px";
+    closeBtn.style.cursor = "pointer";
+     */
 
   var template = populateMap(data, i);
   console.log("template", template);
@@ -396,8 +550,8 @@ function createPopup(data, i) {
     false
   );
   /*  document.getElementById("closeBtn" + i).addEventListener("click", function () {
-    hidePopup(i);
-  }, false); */
+      hidePopup(i);
+    }, false); */
 
   document.getElementById("submitButtonFieldText" + i).addEventListener(
     "click",
@@ -558,30 +712,26 @@ function handleExitIntent() {
 
 // Call the showPopup function when the page loads
 //window.onload = showPopup;
-/* function timerIncrement() {
+function timerIncrement() {
   idleTime = idleTime + 1;
-  if (idleTime > 1) { // 20 minutes
+  if (idleTime > 1) {
+    // 20 minutes
     //window.location.reload();
     if (popups.length > 0) {
-
       for (var i = 0; i < popups.length; i++) {
         var rules = popups[i].rules;
         for (var j = 0; j < rules.length; j++) {
-          if (rules[j].sequenceNumber == 4 && rules[j].status === 'active') {
-
+          if (rules[j].sequenceNumber == 4 && rules[j].status === "active") {
             showPopup(i);
           }
-
-
         }
       }
     }
-
-
   }
-} */
+}
 
 function showPopups() {
+  alert("hi");
   if (popups.length > 0) {
     for (var i = 0; i < popups.length; i++) {
       var rules = popups[i].rules;
@@ -592,4 +742,30 @@ function showPopups() {
       }
     }
   }
+}
+
+function convertToTitleCaseWithSpace(inputString) {
+  // Split the string by a regex pattern that matches uppercase letters
+  let words = inputString.split(/(?=[A-Z])/);
+
+  // Capitalize the first letter of the first word
+  words[0] = words[0][0].toUpperCase() + words[0].slice(1);
+
+  // Join the words back together with a space between each word
+  let titleCaseString = words.join(" ");
+
+  return titleCaseString;
+}
+
+function convertToTitleCaseWithPlus(inputString) {
+  // Split the string by a regex pattern that matches uppercase letters
+  let words = inputString.split(/(?=[A-Z])/);
+
+  // Capitalize the first letter of the first word
+  words[0] = words[0][0].toUpperCase() + words[0].slice(1);
+
+  // Join the words back together with a plus symbol between each word
+  let titleCaseString = words.join("+");
+
+  return titleCaseString;
 }
