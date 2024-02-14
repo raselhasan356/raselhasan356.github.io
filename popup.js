@@ -278,9 +278,9 @@ function populateMap(data2, i) {
     data2.background_image +
     ")" +
     ";" +
-    "width: auto;" +
-    "height: 335px;" +
-    "background-repeat: no-repeat;" +
+    // "width: auto;" +
+    // "height: 335px;" +
+    "background-repeat: round;" +
     "background-size: cover;" +
     "background-position: top center;" +
     "overflow: hidden;";
