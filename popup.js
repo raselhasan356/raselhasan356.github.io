@@ -279,7 +279,7 @@ function populateMap(data2, i) {
     ")" +
     ";" +
     "width: auto;" +
-    "height: auto;" +
+    "height: 335px;" +
     "background-repeat: no-repeat;" +
     "background-size: cover;" +
     "background-position: top center;" +
@@ -711,6 +711,7 @@ function handleExitIntent() {
 // Call the showPopup function when the page loads
 //window.onload = showPopup;
 function timerIncrement() {
+  console.log("inside idle time");
   idleTime = idleTime + 1;
   if (idleTime > 1) {
     // 20 minutes
