@@ -24,9 +24,9 @@ let exitPopups = [];
 
 var popups = [];
 
-var idleTime = 0;
-var idleTime2 = 0;
-var idleTime3 = 0;
+var idleTime = 1;
+var idleTime2 = 1;
+var idleTime3 = 1;
 var addEvent = function (obj, evt, fn) {
   if (obj.addEventListener) {
     obj.addEventListener(evt, fn, false);
@@ -327,7 +327,7 @@ function showPopup(i) {
 
 function timerIncrement() {
   idleTime = idleTime + 1;
-  if (idleTime > 1) {
+  if (idleTime >= 1) {
     // 20 minutes
     //window.location.reload();
     if (inactivityPopups.length > 0) {
