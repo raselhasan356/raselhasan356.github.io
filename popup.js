@@ -1,11 +1,14 @@
-var apiUrl = "https://016e-175-29-198-242.ngrok-free.app/v1/popup-entity?shop=";
+var apiUrl = "https://shopify-app.vivasoftltd.com/v1/popup-entity?shop=";
 var submitUrl =
-  "https://016e-175-29-198-242.ngrok-free.app/v1/leads/generate-lead?shop=";
+  "https://shopify-app.vivasoftltd.com/v1/leads/generate-lead?shop=";
 
 /* var apiUrl =
   "https://87ff-182-163-107-41.ngrok-free.app/v1/popup-entity?shop=quickstart-bdb585f9.myshopify.com";
  */
 // Attach event listener to the close button
+
+var eventUrl =
+  "https://shopify-app.vivasoftltd.com/v1/events/generate-events?shop=";
 
 var templateMap = new Map();
 var shop = "quickstart-bdb585f9";
@@ -15,9 +18,15 @@ var shownOn75 = 0;
 var shownOn100 = 0;
 var shownOnLeave = false;
 var shownOnInactivity = 0;
+var scrollPopups = [];
+let inactivityPopups = [];
+let exitPopups = [];
 
 var popups = [];
+
 var idleTime = 0;
+var idleTime2 = 0;
+var idleTime3 = 0;
 var addEvent = function (obj, evt, fn) {
   if (obj.addEventListener) {
     obj.addEventListener(evt, fn, false);
@@ -41,24 +50,34 @@ function setApi() {
   browserUrl = browserUrl.replace("https://", "");
 
   browserUrl = browserUrl.substring(0, browserUrl.indexOf("/"));
-  console.log(browserUrl);
   //var first =  browserUrl.charAt('https://');
 
-  console.log(browserUrl);
-  apiUrl = apiUrl + browserUrl;
+  apiUrl = apiUrl + browserUrl + "&Status=active";
+  // apiUrl =
+  //   "http://192.168.9.119:4000/v1/popup-entity?shop=fusionfirm.myshopify.com";
   submitUrl = submitUrl + browserUrl;
+  // submitUrl =
+  //   "http://192.168.9.119:4000/v1/leads/generate-lead?shop=fusionfirm.myshopify.com";
+  console.log(apiUrl);
+  console.log(submitUrl);
+  console.log(browserUrl);
 }
 
 window.onload = function (e) {
-  // var idleInterval = setInterval(timerIncrement, 60000);
-  //let browserUrl = window.location.href;
+  var idleInterval1 = setInterval(timerIncrement, 60000);
+  var idleInterval2 = setInterval(timerIncrement2, 180000);
+  var idleInterval3 = setInterval(timerIncrement3, 300000);
 
-  var idleInterval = setInterval(timerIncrement, 60000);
   setApi();
   getPopupInformation();
 
+  var throttledListener = throttle(scrollListener, 2000);
+  window.addEventListener("scroll", throttledListener);
+
   document.onmousemove = function (e) {
     idleTime = 0;
+    idleTime2 = 0;
+    idleTime3 = 0;
   };
 
   $(document).keypress(function (e) {
@@ -67,525 +86,141 @@ window.onload = function (e) {
 
   const body = document.querySelector("body");
   let mouseY;
-  /*  $(document).mouseleave(function () {
-    console.log("out");
-    showPopups();
-  });
-  document.body.addEventListener("mouseleave", (event) => {
-    mouseY = event.clientY;
-    console.log("y", mouseY);
-    if (mouseY < 15) {
-      console.log("Exit Intent");
-      showPopups();
-      // add additional code for exit intent here
-    }
-  }); */
-
-  //writeDom(data);
-
-  addEvent(document, "mouseout", function (event) {
-    event = event ? event : window.event;
-    var from = event.relatedTarget || event.toElement;
-    if ((!from || from.nodeName == "HTML") && event.clientY <= 100) {
-      //alert("left top bar");mo
-      if (popups.length > 0 && !shownOnLeave) {
-        for (var i = 0; i < popups.length; i++) {
-          var rules = popups[i].rules;
-          for (var j = 0; j < rules.length; j++) {
-            if (rules[j].sequenceNumber == 3 && rules[j].status === "active") {
-              showPopup(i);
-              shownOnLeave = true;
-            }
-          }
-        }
-      }
-    }
-  });
 };
 
-// window.addEventListener("beforeunload", function (e) {
-//   //handleExitEvent();
-//   showPopups();
-// });
-
-/* window.onbeforeunload = confirmExit;
-  function confirmExit()
-  {
-    showPopups();
-    //return "You have attempted to leave this page.  If you have made any changes to the fields without clicking the Save button, your changes will be lost.  Are you sure you want to exit this page?";
-  }
- */
-/* window.addEventListener("beforeunload", function (e) {
-  e.preventDefault();
-  showPopups();
-
-  setTimeout(function () {
-    //your code to be executed after 1 second
-  }, 10000);
-}); */
-
-$(window).on("scroll", function () {
-  var s = $(window).scrollTop(),
-    d = $(document).height(),
-    c = $(window).height();
-
-  var scrollPercent = (s / (d - c)) * 100;
-
-  // console.clear();
-  console.log(scrollPercent);
-
-  if (scrollPercent >= 25 && scrollPercent < 26 && shownOn25 <= 2) {
-    //console.log(alert('scroll 25'));
-    if (popups.length > 0) {
-      var s25 = false;
-      for (var i = 0; i < popups.length; i++) {
-        var rules = popups[i].rules;
-        for (var j = 0; j < rules.length; j++) {
-          if (
-            rules[j].sequenceNumber == 2 &&
-            rules[j].status === "active" &&
-            rules[j].value == 25
-          ) {
-            showPopup(i);
-            if (!s25) shownOn25++;
-            s25 = true;
-          }
-        }
-      }
-    }
-  }
-
-  if (scrollPercent >= 50 && scrollPercent < 52 && shownOn50 <= 2) {
-    //console.log(alert('scroll 25'));
-    if (popups.length > 0) {
-      var s50 = false;
-      for (var i = 0; i < popups.length; i++) {
-        var rules = popups[i].rules;
-
-        for (var j = 0; j < rules.length; j++) {
-          if (
-            rules[j].sequenceNumber == 2 &&
-            rules[j].status === "active" &&
-            rules[j].value == 50
-          ) {
-            showPopup(i);
-            if (!s50) shownOn50++;
-            s50 = true;
-          }
-        }
-      }
-    }
-  }
-
-  if (scrollPercent >= 75 && scrollPercent < 77 && shownOn75 <= 2) {
-    //console.log(alert('scroll 25'));
-    if (popups.length > 0) {
-      var s75 = false;
-      for (var i = 0; i < popups.length; i++) {
-        var rules = popups[i].rules;
-        for (var j = 0; j < rules.length; j++) {
-          if (
-            rules[j].sequenceNumber == 2 &&
-            rules[j].status === "active" &&
-            rules[j].value == 75
-          ) {
-            showPopup(i);
-            if (!s75) shownOn75++;
-            s75 = true;
-          }
-        }
-      }
-    }
-  }
-
-  if (scrollPercent >= 95 && scrollPercent <= 100 && shownOn100 <= 2) {
-    //console.log(alert('scroll 25'));
-    if (popups.length > 0) {
-      var s100 = false;
-      for (var i = 0; i < popups.length; i++) {
-        var rules = popups[i].rules;
-        for (var j = 0; j < rules.length; j++) {
-          if (
-            rules[j].sequenceNumber == 2 &&
-            rules[j].status === "active" &&
-            rules[j].value == 100
-          ) {
-            showPopup(i);
-            if (!s100) shownOn100++;
-            s100 = true;
-          }
-        }
-      }
-    }
-  }
-});
-
-function populateMap(data2, i) {
-  /*   let data2 = {
-      background: {
-          color: "#4343",
-          image_url: "test.jpg"
-      },
-      headingField: {
-          textAlignment: "left",
-          textContent: 'Newsletter',
-          fontColor: 'black',
-          fontFamily: 'dmSans',
-          fontSize: '24'
-      },
-      inputFieldLabel01: {
-          textAlignment: 'left',
-          textContent: 'Newsletter',
-          fontColor: 'black',
-          fontFamily: 'dmSans',
-          fontSize: '24'
-      },
-      inputFieldLabel02: {
-          textAlignment: 'left',
-          textContent: 'Newsletter',
-          fontColor: 'black',
-          fontFamily: 'dmSans',
-          fontSize: '24'
-      },
-      submitButtonField: {
-          textAlignment: 'left',
-          textContent: 'Newsletter',
-          fontColor: 'black',
-          fontFamily: 'dmSans',
-          fontSize: '24'
-      }
-  } */
-
-  let fontLink = document.createElement("link");
-  fontLink.setAttribute("rel", "stylesheet");
-  // fontLink.setAttribute('href', 'https://fonts.googleapis.com/css2?family=' + convertToTitleCaseWithPlus(data2.headingField.fontFamily));
-  fontLink.setAttribute(
-    "href",
-    "https://fonts.googleapis.com/css2?family=DM+Sans"
-  );
-  document.head.appendChild(fontLink);
-
-  let bgStyle =
-    "display: flex;" +
-    "flex-direction: column;" +
-    "align-items: center;" +
-    "padding: 1.5rem;" +
-    // "background-color:" +
-    // " " +
-    // data2.background.color +
-    // ";" +
-    "background-image: url(" +
-    data2.background_image +
-    ")" +
-    ";" +
-    // "width: auto;" +
-    // "height: 335px;" +
-    "background-repeat: round;" +
-    "background-size: cover;" +
-    "background-position: top center;" +
-    "overflow: hidden;";
-
-  let headingStyle =
-    "border-bottom: 2px solid rgb(23 23 63);" +
-    "font-weight: 800;" +
-    "letter-spacing: 1px;" +
-    "margin: 26px 0 0;" +
-    "padding: 0 0 6px 3px;" +
-    "font-size: " +
-    data2.headingField.fontSize +
-    "px;" +
-    "font-family: " +
-    convertToTitleCaseWithSpace(data2.headingField.fontFamily) +
-    ";" +
-    "color: " +
-    data2.headingField.fontColor +
-    ";" +
-    "text-align: " +
-    data2.headingField.textAlignment +
-    ";";
-
-  let input1Style =
-    " display: flex;" +
-    "height: 2.5rem;" +
-    "width: 100%;" +
-    "border-radius: 0.375rem;" +
-    "border: 1px solid #a0aec0;" +
-    "background-color: #fff;" +
-    "padding-left: 0.75rem;" +
-    "padding-right: 0.75rem;" +
-    "padding-top: 0.5rem;" +
-    "padding-bottom: 0.5rem;" +
-    "font-size:" +
-    " " +
-    data2.inputFieldLabel01.fontSize +
-    "px;" +
-    "outline: none;" +
-    "transition: border-color 0.15s ease-in-out;" +
-    "box-sizing: border-box;";
-
-  let input2Style =
-    " display: flex;" +
-    "height: 2.5rem;" +
-    "width: 100%;" +
-    "border-radius: 0.375rem;" +
-    "border: 1px solid #a0aec0;" +
-    "background-color: #fff;" +
-    "padding-left: 0.75rem;" +
-    "padding-right: 0.75rem;" +
-    "padding-top: 0.5rem;" +
-    "padding-bottom: 0.5rem;" +
-    "font-size:" +
-    " " +
-    data2.inputFieldLabel02.fontSize +
-    "px;" +
-    "outline: none;" +
-    "transition: border-color 0.15s ease-in-out;" +
-    " box-sizing: border-box;";
-
-  let buttonStyle =
-    " display: inline-flex;" +
-    "align-items: center;" +
-    "justify-content: center;" +
-    "white-space: nowrap;" +
-    "border-radius: 0.375rem;" +
-    "font-size: 0.875rem;" +
-    "font-weight: 500;" +
-    "transition: background-color 0.15s ease-in-out;" +
-    "outline: none;" +
-    "border: none;" +
-    "cursor: pointer;" +
-    "opacity: 1;" +
-    "background-color: #000;" +
-    "color: #fff;" +
-    "&:hover {" +
-    "background-color: rgba(0, 0, 0, 0.9);" +
-    "};" +
-    // "padding-left: 1rem;" +
-    // "padding-right: 1rem;" +
-    "width: 96px;" +
-    "height: 40px;" +
-    '"';
-
-  let template1 =
-    "<div " +
-    'style="' +
-    "display: grid;" +
-    "grid-template-columns: 1fr 1fr;" +
-    "background-color: " +
-    data2.background.color +
-    ";" +
-    "box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);" +
-    "height: 335px;" +
-    "width: 575px;" +
-    "max-height: auto;" +
-    "font-family: 'DM Sans', sans-serif;\"" +
-    ">" +
-    "<div " +
-    'style="' +
-    bgStyle +
-    '"' +
-    "></div>" +
-    "<div" +
-    " " +
-    ' style="display: flex; flex-direction: column; gap: 1.25rem; padding: 16px 16px 24px"' +
-    ">" +
-    ' <div id = "close' +
-    i +
-    '"' +
-    ' style="position: absolute; right: 0.75rem; top: 0.75rem">' +
-    "<svg" +
-    " " +
-    'width="16"' +
-    'height="16"' +
-    'viewBox="0 0 16 16"' +
-    " " +
-    'fill="none"' +
-    " " +
-    " " +
-    'xmlns="http://www.w3.org/2000/svg"' +
-    ">" +
-    "<path" +
-    " " +
-    'd="M13.3332 13.3334L2.6665 2.66675M13.3332 2.66675L2.6665 13.3334"' +
-    " " +
-    'stroke="#212121"' +
-    " " +
-    'stroke-linecap="round"' +
-    "></path>" +
-    "</svg>" +
-    "</div>" +
-    " " +
-    "<div" +
-    " " +
-    "style=" +
-    '"' +
-    headingStyle +
-    '"' +
-    ">" +
-    "$header" +
-    "</div>" +
-    "<div>" +
-    '<div style="font-size: 14px; font-family: DM Sans; color: #000; text-align: left; margin: 11px 0 5px 2px">' +
-    "$input1Label" +
-    "</div>" +
-    '<input id="input1' +
-    i +
-    '"' +
-    ' style= "' +
-    input1Style +
-    '"' +
-    ' placeholder="Enter here"' +
-    "/>" +
-    "</div>" +
-    "<div style='margin-bottom: -5px'>" +
-    '<div style="font-size: 14px; font-family: DM Sans; color: #000; text-align: left; margin: -2px 0 5px 2px;">' +
-    "$input2Label" +
-    "</div>" +
-    "<input" +
-    ' id="input2' +
-    i +
-    '"' +
-    " " +
-    'style="' +
-    input2Style +
-    '" ' +
-    'placeholder="Enter here"' +
-    "/>" +
-    "</div>" +
-    "<button" +
-    " " +
-    "id =" +
-    '"submitButtonFieldText' +
-    i +
-    '"' +
-    " " +
-    "style=" +
-    " " +
-    '"' +
-    buttonStyle +
-    " " +
-    ">" +
-    '<div style="font-size: 14px; color: #fff; text-align: center">' +
-    "$buttonText" +
-    " </div>" +
-    "</button>" +
-    "</div>" +
-    "</div>";
-
-  return template1;
-}
-
-function createPopup(data, i) {
+function createPopup(data) {
+  console.log("found data", data);
   var popup = document.createElement("div");
-  popup.id = "popup" + i;
+  popup.id = "popup_" + data._id;
+  if (data.template_id == 6) {
+    setParentDivStyleTopHeader(popup);
+  } else {
+    setParentDivStyle(popup);
+  }
 
-  popup.style.position = "fixed";
-  popup.style.top = "50%";
-  popup.style.left = "50%";
-  popup.style.transform = "translate(-50%, -50%)";
-  popup.style.zIndex = "999";
   popup.style.display = "none";
 
-  /* var closeBtn = document.createElement("span");
-    closeBtn.id = "closeBtn" + i;
-    closeBtn.innerHTML = "&times;";
-    closeBtn.onclick = hidePopup;
-    closeBtn.style.position = "absolute";
-    closeBtn.style.top = "5px";
-    closeBtn.style.right = "5px";
-    closeBtn.style.cursor = "pointer";
-    //popup.style.display = "block";
-    popup.style.position = "fixed";
-    popup.style.top = "50%";
-    popup.style.left = "50%";
-    popup.style.transform = "translate(-50%, -50%)";
-    popup.style.padding = "20px";
-    popup.style.backgroundColor = "#0acf73";
-    popup.style.border = "1px solid #ccc";
-    popup.style.borderRadius = "8px";
-    popup.style.boxShadow = "0 0 10px rgba(0, 0, 0, 0.3)";
-    popup.style.zIndex = "999";
-
-    // Apply styles for the close button
-    //var closeBtn = document.getElementById("closeBtn");
-    closeBtn.style.position = "absolute";
-    closeBtn.style.top = "5px";
-    closeBtn.style.right = "5px";
-    closeBtn.style.cursor = "pointer";
-     */
-
-  var template = populateMap(data, i);
-  console.log("template", template);
-
-  template = template.replace("$header", data.headingField.textContent);
-  template = template.replace(
-    "$input1Label",
-    data.inputFieldLabel01.textContent
-  );
-  template = template.replace(
-    "$input2Label",
-    data.inputFieldLabel02.textContent
-  );
-  template = template.replace(
-    "$buttonText",
-    data.submitButtonField.textContent
-  );
-
-  popup.innerHTML = template;
-
-  //var content = document.createElement("p");
-  //content.innerHTML = data.text;
-
-  //popup.appendChild(closeBtn);
-  //popup.appendChild(content);
+  popup.innerHTML = data.templateData;
 
   document.body.appendChild(popup);
-  document.getElementById("close" + i).addEventListener(
+  document.getElementById(data.close_button_id).addEventListener(
     "click",
-    function () {
-      hidePopup(i);
-    },
-    false
-  );
-  /*  document.getElementById("closeBtn" + i).addEventListener("click", function () {
-      hidePopup(i);
-    }, false); */
-
-  document.getElementById("submitButtonFieldText" + i).addEventListener(
-    "click",
-    function () {
-      submitEmail(i, data._id);
+    function (event) {
+      console.log("event", event);
+      hidePopup(data._id);
     },
     false
   );
 
-  //commenting rules
+  const events = document.getElementsByClassName("click");
+
+  for (var i = 0; i < events.length; i++) {
+    events[i].addEventListener(
+      "click",
+      function (e) {
+        incrementClick(e, data._id, "Click");
+      },
+      false
+    );
+  }
+
+  const submitButn = document.getElementById(data.submit_button_id);
+  if (submitButn) {
+    submitButn.addEventListener(
+      "click",
+      function (event) {
+        submitEmail(data._id, false, event, data.submit_button_id);
+      },
+      false
+    );
+  }
 
   var rules = data.rules;
   var displayOnStart = false;
   for (var j = 0; j < rules.length; j++) {
     if (rules[j].sequenceNumber == 1 && rules[j].status === "active") {
       setTimeout(function () {
-        showPopup(i);
+        showPopup(data._id);
       }, rules[j].value * 1000);
-      displayOnStart = true;
     }
+
     if (rules[j].sequenceNumber == 2 && rules[j].status === "active") {
-      displayOnStart = true;
+      data.shownOnScroll = false;
+      data.scrollPercentage = rules[j].value;
+      scrollPopups.push(data);
+    }
+    if (rules[j].sequenceNumber == 3 && rules[j].status === "active") {
+      data.shownOnExit = false;
+      exitPopups.push(data);
+    }
+    if (rules[j].sequenceNumber == 4 && rules[j].status === "active") {
+      data.shownOnInactivity = false;
+      inactivityPopups.push(data);
     }
   }
 }
 
-function submitEmail(i, id) {
-  console.log("insed submit...." + i);
+document.addEventListener("mouseout", (e) => {
+  if (!e.toElement && !e.relatedTarget) {
+    console.log("exit intent");
+    showExitPopups();
+  }
+});
 
-  let name = document.getElementById("input1" + i).value;
-  let email = document.getElementById("input2" + i).value;
+function submitEmail(id, nameMandatory, event, submit_button_id) {
+  event.preventDefault();
+  console.log("inside submit");
+  let name = "";
+  let email = "";
+
+  let nameInput = document.getElementById("name_" + id);
+  let emailInput = document.getElementById("email_" + id);
+
+  // Get the values from the input fields
+  if (nameInput) {
+    name = nameInput.value.trim();
+  }
+  if (emailInput) {
+    email = emailInput.value.trim();
+  }
+
+  // Regular expression pattern for validating email
+  let emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  // Create a style element
+  let style = document.createElement("style");
+
+  // Add the CSS rules to the style element
+  style.textContent = `
+        .error::placeholder {
+            color: red;
+        }
+    `;
+  // Append the style element to the document head
+  document.head.appendChild(style);
+  // Validate name and email
+  if (name === "" && nameMandatory) {
+    console.log("Please enter a name");
+    nameInput.placeholder = "Please enter a name";
+    nameInput.classList.add("error");
+    return;
+  }
+
+  if (!emailPattern.test(email)) {
+    console.log("Please enter a valid email");
+    emailInput.value = "";
+    emailInput.placeholder = "Please enter a valid email";
+    emailInput.classList.add("error");
+    return;
+  }
+
   console.log("name", name);
   console.log("email", email);
 
   let data = { email: email, name: name, popUpId: id };
-  generateLead(data, i);
+  generateLead(data, id, submit_button_id).then((response) => {
+    console.log(response);
+  });
 }
 
 async function getPopupInformation() {
@@ -612,15 +247,6 @@ async function getPopupInformation() {
       popups = data.data;
 
       writeDom(popups);
-
-      const body = document.querySelector("body");
-      let mouseY;
-
-      body.addEventListener("mouseleave", (event) => {
-        mouseY = event.clientY;
-        if (mouseY < 0) {
-        }
-      });
     })
     .catch((error) => {
       console.error("Error:", error);
@@ -629,7 +255,7 @@ async function getPopupInformation() {
   // writeDom(popups);
 }
 
-async function generateLead(data, i) {
+async function generateLead(data, id, submit_button_id) {
   console.log("called lead api");
   fetch(submitUrl, {
     headers: {
@@ -657,71 +283,61 @@ async function generateLead(data, i) {
     })
     .then((data) => {
       console.log(JSON.stringify(data, null, 2));
-      document.getElementById("popup" + i).style.display = "none";
+      // document.getElementById("popup" + i).style.display = "none";
+      // Enable the button and restore its original text
+      document.getElementById(submit_button_id).disabled = false;
+      document.getElementById(submit_button_id).innerHTML = "Submitted";
+      setTimeout(
+        () =>
+          // Hide the popup
+          hidePopup(id),
+        1000
+      );
     })
     .catch((error) => {
-      console.error("Error:", error);
+      console.log(error);
+      // Enable the button and restore its original text
+      /* document.getElementById("submitButtonFieldText" + i).disabled = false;
+      document.getElementById("submitButtonFieldText" + i).innerHTML = "Submit"; */
     });
-
-  // writeDom(popups);
 }
 
 function writeDom(data) {
   for (var i = 0; i < data.length; i++) {
-    //if (data[i].text) {
-
-    createPopup(data[i], i);
-    //}
+    createPopup(data[i]);
   }
-
-  //createPopup(null, 1);
 }
 
 // Function to hide the popup
-function hidePopup(i) {
-  document.getElementById("popup" + i).style.display = "none";
+function hidePopup(id) {
+  document.getElementById("popup_" + id).style.display = "none";
+  // Remove the background overlay
+
+  const overlay = document.querySelector("#popup-overlay");
+  if (overlay) {
+    overlay.parentNode.removeChild(overlay);
+  }
 }
 
 function showPopup(i) {
-  document.getElementById("popup" + i).style.display = "block";
+  document.getElementById("popup_" + i).style.display = "block";
+  overLay();
+  incrementView(i, "View");
 }
 
-function handleExitIntent() {
-  body.addEventListener("mouseleave", (event) => {
-    mouseY = event.clientY;
-    if (mouseY < 16) {
-      console.log("Exit Intent");
-      // add additional code for exit intent here
-
-      if (popups.length > 0) {
-        for (var i = 0; i < popups.length; i++) {
-          var rules = popups[i].rules;
-          for (var j = 0; j < rules.length; j++) {
-            if (rules[j].sequenceNumber == 3 && rules[j].status === "active") {
-              showPopup(i);
-            }
-          }
-        }
-      }
-    }
-  });
-}
-// Create the popup dynamically
-
-// Call the showPopup function when the page loads
-//window.onload = showPopup;
 function timerIncrement() {
-  console.log("inside idle time");
   idleTime = idleTime + 1;
   if (idleTime > 1) {
     // 20 minutes
     //window.location.reload();
-    if (popups.length > 0) {
-      for (var i = 0; i < popups.length; i++) {
-        var rules = popups[i].rules;
-        for (var j = 0; j < rules.length; j++) {
-          if (rules[j].sequenceNumber == 4 && rules[j].status === "active") {
-            showPopup(i);
+    if (inactivityPopups.length > 0) {
+      for (var i = 0; i < inactivityPopups.length; i++) {
+        var rules = inactivityPopups[i].rules;
+
+        if (!inactivityPopups[i].shownOnInactivity) {
+          if (rules[3].value == 1) {
+            inactivityPopups[i].shownOnInactivity = true;
+            showPopup(inactivityPopups[i]._id);
           }
         }
       }
@@ -729,15 +345,67 @@ function timerIncrement() {
   }
 }
 
-function showPopups() {
-  alert("hi");
-  if (popups.length > 0) {
-    for (var i = 0; i < popups.length; i++) {
-      var rules = popups[i].rules;
-      for (var j = 0; j < rules.length; j++) {
-        if (rules[j].sequenceNumber == 3 && rules[j].status === "active") {
-          showPopup(i);
+function timerIncrement2() {
+  idleTime2 = idleTime2 + 1;
+  if (idleTime2 > 1) {
+    // 20 minutes
+    //window.location.reload();
+    if (inactivityPopups.length > 0) {
+      for (var i = 0; i < inactivityPopups.length; i++) {
+        var rules = inactivityPopups[i].rules;
+
+        if (!inactivityPopups[i].shownOnInactivity) {
+          if (rules[3].value == 3) {
+            popup.shownOnInactivity = true;
+            showPopup(inactivityPopups[i]._id);
+          }
         }
+      }
+    }
+  }
+}
+
+function timerIncrement3() {
+  idleTime3 = idleTime3 + 1;
+  if (idleTime3 > 1) {
+    // 20 minutes
+    //window.location.reload();
+    if (inactivityPopups.length > 0) {
+      for (var i = 0; i < inactivityPopups.length; i++) {
+        var rules = inactivityPopups[i].rules;
+
+        if (!inactivityPopups[i].shownOnInactivity) {
+          if (rules[3].value == 5) {
+            popup.shownOnInactivity = true;
+            showPopup(inactivityPopups[i]._id);
+          }
+        }
+      }
+    }
+  }
+}
+
+function showPopups(value) {
+  if (scrollPopups.length > 0) {
+    for (var i = 0; i < scrollPopups.length; i++) {
+      if (
+        !scrollPopups[i].shownOnScroll &&
+        scrollPopups[i].scrollPercentage == value
+      ) {
+        scrollPopups[i].shownOnScroll = true;
+        showPopup(scrollPopups[i]._id);
+      }
+    }
+  }
+}
+
+function showExitPopups() {
+  //alert("hi");
+  if (exitPopups.length > 0) {
+    for (var i = 0; i < exitPopups.length; i++) {
+      if (!exitPopups[i].shownOnExit) {
+        exitPopups[i].shownOnExit = true;
+        showPopup(exitPopups[i]._id);
       }
     }
   }
@@ -767,4 +435,140 @@ function convertToTitleCaseWithPlus(inputString) {
   let titleCaseString = words.join("+");
 
   return titleCaseString;
+}
+
+function overLay() {
+  // Create a background overlay
+  const overlay = document.createElement("div");
+  overlay.id = "popup-overlay";
+  overlay.style.position = "fixed";
+  overlay.style.top = "0";
+  overlay.style.left = "0";
+  overlay.style.width = "100%";
+  overlay.style.height = "100%";
+  overlay.style.backgroundColor = " rgb(0 0 0 / 0.4)"; // Semi-transparent black background
+  overlay.style.backdropFilter = "blur(2px)"; // Apply blur effect
+  overlay.style.zIndex = "1";
+
+  // Append overlay to body
+  document.body.appendChild(overlay);
+}
+
+function throttle(func, delay) {
+  // allows [func] to run once every [delay] ms
+  var func = func.bind(func),
+    last = Date.now();
+  return function () {
+    if (Date.now() - last > delay) {
+      func();
+      last = Date.now();
+    }
+  };
+}
+function scrollListener() {
+  console.log("scrolled with delay");
+
+  var s = $(window).scrollTop(),
+    d = $(document).height(),
+    c = $(window).height();
+
+  var scrollPercent = (s / (d - c)) * 100;
+  console.log("scroll", scrollPercent);
+
+  if (scrollPercent >= 25 && scrollPercent <= 50) {
+    showPopups(25);
+
+    console.log("25", shownOn25);
+  }
+
+  if (scrollPercent >= 50 && scrollPercent <= 75) {
+    shownOn50++;
+    showPopups(50);
+
+    console.log("50", shownOn50);
+  }
+  if (scrollPercent >= 75 && scrollPercent <= 100) {
+    showPopups(75);
+  }
+}
+
+async function incrementClick(event, id, type) {
+  if (event.target.id.startsWith("submit")) {
+  } else {
+    fetch(eventUrl, {
+      headers: {
+        "ngrok-skip-browser-warning": true,
+        "Content-type": "application/json; charset=UTF-8",
+      },
+      method: "POST",
+      body: JSON.stringify({
+        /*   "eventType": "Click", */
+        eventType: type,
+        popUpId: id,
+      }),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          if (response.status === 404) {
+            throw new Error("Data not found");
+          } else if (response.status === 500) {
+            throw new Error("Server error");
+          } else {
+            throw new Error("Network response was not ok");
+          }
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log("click api hit");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+}
+
+//increment view
+
+async function incrementView(id, type) {
+  fetch(eventUrl, {
+    headers: {
+      "ngrok-skip-browser-warning": true,
+      "Content-type": "application/json; charset=UTF-8",
+    },
+    method: "POST",
+    body: JSON.stringify({
+      /*   "eventType": "Click", */
+      eventType: type,
+      popUpId: id,
+    }),
+  })
+    .then((response) => {
+      if (!response.ok) {
+        if (response.status === 404) {
+          throw new Error("Data not found");
+        } else if (response.status === 500) {
+          throw new Error("Server error");
+        } else {
+          throw new Error("Network response was not ok");
+        }
+      }
+      return response.json();
+    })
+    .then((data) => {
+      console.log("click api hit");
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+}
+
+function setParentDivStyle(element) {
+  element.style.cssText =
+    "display: block; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); border: 1px solid rgb(204, 204, 204); border-radius: 8px; box-shadow: rgba(0, 0, 0, 0.1) 5px 5px 5px; z-index: 999;";
+}
+
+function setParentDivStyleTopHeader(element) {
+  element.style.cssText =
+    "display: block; background: transparent; position: fixed; left: 50%; transform: translate(-50%); z-index: 999;";
 }
