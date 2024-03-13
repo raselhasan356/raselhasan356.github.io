@@ -52,7 +52,7 @@ function setApi() {
   browserUrl = browserUrl.substring(0, browserUrl.indexOf("/"));
   //var first =  browserUrl.charAt('https://');
 
-  apiUrl = apiUrl + browserUrl + "&Status=active";
+  apiUrl = apiUrl + browserUrl + "&popupStatus=active";
   // apiUrl =
   //   "http://192.168.9.119:4000/v1/popup-entity?shop=fusionfirm.myshopify.com";
   submitUrl = submitUrl + browserUrl;
