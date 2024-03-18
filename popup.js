@@ -56,6 +56,7 @@ function setApi() {
   // apiUrl =
   //   "http://192.168.9.119:4000/v1/popup-entity?shop=fusionfirm.myshopify.com";
   submitUrl = submitUrl + browserUrl;
+   eventUrl = eventUrl + browserUrl;
   // submitUrl =
   //   "http://192.168.9.119:4000/v1/leads/generate-lead?shop=fusionfirm.myshopify.com";
   console.log(apiUrl);
