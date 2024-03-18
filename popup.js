@@ -565,7 +565,7 @@ async function incrementView(id, type) {
 
 function setParentDivStyle(element) {
   element.style.cssText =
-    "display: block; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); box-shadow: rgba(0, 0, 0, 0.1) 5px 5px 5px; z-index: 999;";
+    "display: block; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 999;";
 }
 
 function setParentDivStyleTopHeader(element) {
