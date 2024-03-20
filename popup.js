@@ -1,13 +1,14 @@
-var apiUrl = "http://192.168.10.184:4000/v1/popup-entity?shop=poptrigg-wp-plugin.test&popupStatus=active";
+var baseUrl = "https://shopify-app.vivasoftltd.com/"
+var apiUrl = baseUrl+ "v1/popup-entity";
 var submitUrl =
-  "http://192.168.10.184:4000/v1/leads/generate-lead?shop=poptrigg-wp-plugin.test";
+  baseUrl +"v1/leads/generate-lead";
 
 /* var apiUrl =
   "https://87ff-182-163-107-41.ngrok-free.app/v1/popup-entity?shop=quickstart-bdb585f9.myshopify.com";
  */
 // Attach event listener to the close button
 
-var eventUrl = "http://192.168.10.184:4000/v1/events/generate-events?shop=poptrigg-wp-plugin.test";
+var eventUrl = baseUrl+"v1/events/generate-events?shop=";
 
 var templateMap = new Map();
 var shop = "quickstart-bdb585f9";
@@ -44,22 +45,20 @@ window.document.onload = function (e) {
   );
 };
 
-function setApi() {;
-  /* let browserUrl = window.location.href;
-  browserUrl = browserUrl.replace("https://", "");
-
-  browserUrl = browserUrl.substring(0, browserUrl.indexOf("/"));
-  //var first =  browserUrl.charAt('https://');
-
-  apiUrl = apiUrl + browserUrl;
-  // apiUrl =
-  //   "http://192.168.9.119:4000/v1/popup-entity?shop=fusionfirm.myshopify.com";
-  submitUrl = submitUrl + browserUrl;
-  // submitUrl =
-  //   "http://192.168.9.119:4000/v1/leads/generate-lead?shop=fusionfirm.myshopify.com";
+function setApi() {
+   let browserUrl = window.location.hostname;
+  
+  apiUrl = apiUrl + "?shop="+browserUrl+"&popupStatus=active";
+ 
+  submitUrl = submitUrl + "?shop="+ browserUrl;
+ 
+  eventUrl = eventUrl + browserUrl;
+  
   console.log(apiUrl);
   console.log(submitUrl);
-  console.log(browserUrl); */
+  console.log(eventUrl); 
+
+
 }
 
 window.onload = function (e) {
@@ -183,7 +182,7 @@ function createPopup(data) {
     }
     if(rules[j].sequenceNumber == 4 && rules[j].status === 'active'){
       data.shownOnInactivity = false;
-      inactivityPopups.push(data)
+      inactivityPopups.push(data);
     }
  
   }
