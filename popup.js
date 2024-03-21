@@ -35,7 +35,7 @@ var addEvent = function (obj, evt, fn) {
   }
 };
 
-window.document.onload = function (e) {
+/* window.document.onload = function (e) {
   console.log(
     "document.onload",
     e,
@@ -43,7 +43,12 @@ window.document.onload = function (e) {
     window.tdiff,
     (window.tdiff[0] = Date.now()) && window.tdiff.reduce(fred)
   );
-};
+}; */
+
+window.navigation.addEventListener("navigate", (event) => {
+  console.log('location changed!');
+  event.preventDefault();
+})
 
 function setApi() {
    let browserUrl = window.location.hostname;
