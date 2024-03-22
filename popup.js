@@ -2,8 +2,11 @@ var baseUrl = "https://shopify-app.vivasoftltd.com/"
 var apiUrl = baseUrl+ "v1/popup-entity";
 var submitUrl =
   baseUrl +"v1/leads/generate-lead";
+//only for test
+  //var shopName= "rasel-test-store-01.myshopify.com";  
 
-/* var apiUrl =
+
+  /* var apiUrl =
   "https://87ff-182-163-107-41.ngrok-free.app/v1/popup-entity?shop=quickstart-bdb585f9.myshopify.com";
  */
 // Attach event listener to the close button
@@ -12,10 +15,6 @@ var eventUrl = baseUrl+"v1/events/generate-events?shop=";
 
 var templateMap = new Map();
 var shop = "quickstart-bdb585f9";
-var shownOn25 = 0;
-var shownOn50 = 0;
-var shownOn75 = 0;
-var shownOn100 = 0;
 var shownOnLeave = false;
 var shownOnInactivity = 0;
 var scrollPopups=[];
@@ -24,9 +23,9 @@ let exitPopups=[];
 
 var popups = [];
 
-var idleTime = 0;
-var idleTime2=0;
-var idleTime3=0;
+var idleTime = 1;
+var idleTime2=1;
+var idleTime3=1;
 var addEvent = function (obj, evt, fn) {
   if (obj.addEventListener) {
     obj.addEventListener(evt, fn, false);
@@ -35,29 +34,20 @@ var addEvent = function (obj, evt, fn) {
   }
 };
 
-/* window.document.onload = function (e) {
-  console.log(
-    "document.onload",
-    e,
-    Date.now(),
-    window.tdiff,
-    (window.tdiff[0] = Date.now()) && window.tdiff.reduce(fred)
-  );
-}; */
 
-window.navigation.addEventListener("navigate", (event) => {
-  console.log('location changed!');
-  event.preventDefault();
-})
 
 function setApi() {
    let browserUrl = window.location.hostname;
   
-  apiUrl = apiUrl + "?shop="+browserUrl+"&popupStatus=active";
- 
+  //apiUrl = apiUrl + "?shop="+browserUrl+"&popupStatus=active";
+ //for testing locally
+ apiUrl = apiUrl + "?shop="+shopName+"&popupStatus=active";
+  
   submitUrl = submitUrl + "?shop="+ browserUrl;
+  //submitUrl = submitUrl + "?shop="+ shopName;
  
   eventUrl = eventUrl + browserUrl;
+ //eventUrl = eventUrl + shopName;
   
   console.log(apiUrl);
   console.log(submitUrl);
@@ -88,6 +78,8 @@ window.onload = function (e) {
 
   $(document).keypress(function (e) {
     idleTime = 0;
+    idleTime2=0;
+    idleTime3=0;
   });
 
   const body = document.querySelector("body");
@@ -176,17 +168,17 @@ function createPopup(data) {
     }
 
     if (rules[j].sequenceNumber == 2 && rules[j].status === "active") {
-      data.shownOnScroll = false;
+      //data.shownOnScroll = false;
       data.scrollPercentage =rules[j].value;
       scrollPopups.push(data)
       
     }
     if(rules[j].sequenceNumber == 3 && rules[j].status === 'active'){
-      data.shownOnExit = false;
+      //data.shownOnExit = false;
       exitPopups.push(data)
     }
     if(rules[j].sequenceNumber == 4 && rules[j].status === 'active'){
-      data.shownOnInactivity = false;
+      //data.shownOnInactivity = false;
       inactivityPopups.push(data);
     }
  
@@ -365,9 +357,12 @@ function hidePopup(id) {
 }
 
 function showPopup(i) {
-  document.getElementById("popup_" + i).style.display = "block";
+  if(checkIf24Hours(i)){
+    document.getElementById("popup_" + i).style.display = "block";
   overLay();
   incrementView(i,"View")
+  }
+  
 
 }
 
@@ -447,8 +442,8 @@ function showPopups(value) {
     for (var i = 0; i < scrollPopups.length; i++) {
    
       
-        if (!scrollPopups[i].shownOnScroll && scrollPopups[i].scrollPercentage ==value) {
-            scrollPopups[i].shownOnScroll =true;
+        if (scrollPopups[i].scrollPercentage ==value) {
+         
             showPopup(scrollPopups[i]._id);
 
         
@@ -461,15 +456,12 @@ function showPopups(value) {
 
 
 function showExitPopups() {
-  //alert("hi");
+ 
   if (exitPopups.length > 0) {
     for (var i = 0; i < exitPopups.length; i++) {
-      if(!exitPopups[i].shownOnExit) {
-        exitPopups[i].shownOnExit =true;
+      
         showPopup(exitPopups[i]._id);
-      }
-    
-     
+      
     }
   }
 }
@@ -544,7 +536,7 @@ function scrollListener() {
  
       showPopups(25);
     
-    console.log('25',shownOn25)
+    
   }
   
   
@@ -552,10 +544,10 @@ function scrollListener() {
 
    
  
-      shownOn50++;
+      
       showPopups(50);
 
-    console.log('50',shownOn50)
+  
   }
   if(scrollPercent >= 75 && scrollPercent <=100){
    
@@ -619,7 +611,7 @@ if(event.target.id.startsWith("submit")){
 
 async function incrementView(id,type){
 
-  
+
     fetch(eventUrl, {
       headers: {
         "ngrok-skip-browser-warning": true,
@@ -668,5 +660,28 @@ function setParentDivStyle(element){
 function setParentDivStyleTopHeader(element){
 
   element.style.cssText = "display: block; background: transparent; position: fixed; left: 50%; transform: translate(-50%); z-index: 999;"
+
+}
+
+function checkIf24Hours(popupid){
+
+  if(!localStorage.getItem(popupid)){
+    //var date = new Date();
+    localStorage.setItem(popupid, Date.now())
+    return true;
+  }
+  var date1 = new Date();
+  var date2 = localStorage.getItem(popupid) ;
+
+  
+  
+  var hours = Math.abs(date1 - date2) / 36e5;
+
+  if (hours>=24){
+    localStorage.setItem({popupid:new Date()})
+    return true;
+
+  } 
+  return false;
 
 }
