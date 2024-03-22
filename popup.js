@@ -41,7 +41,7 @@ function setApi() {
   
   //apiUrl = apiUrl + "?shop="+browserUrl+"&popupStatus=active";
  //for testing locally
- apiUrl = apiUrl + "?shop="+shopName+"&popupStatus=active";
+ apiUrl = apiUrl + "?shop="+browserUrl+"&popupStatus=active";
   
   submitUrl = submitUrl + "?shop="+ browserUrl;
   //submitUrl = submitUrl + "?shop="+ shopName;
