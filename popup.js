@@ -34,7 +34,7 @@ var addEvent = function (obj, evt, fn) {
   }
 };
 
-
+onload();
 
 function setApi() {
    let browserUrl = window.location.hostname;
@@ -56,7 +56,10 @@ function setApi() {
 
 }
 
-document.addEventListener("DOMContentLoaded", function() {
+
+
+
+ function onLoad() {
   
   loadFonts();
   
@@ -89,6 +92,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
 });
+
+
 
 
  function onLoad() {
