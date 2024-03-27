@@ -60,6 +60,13 @@ var addEvent = function (obj, evt, fn) {
           var endingTime = new Date().getTime();
           var tookTime = endingTime - startingTime;
           window.alert("jQuery is loaded, after " + tookTime + " milliseconds!");
+          $(document).keypress(function (e) {
+            idleTime = 0;
+            idleTime2=0;
+            idleTime3=0;
+          });
+
+
       });
   });
 })();
@@ -87,11 +94,7 @@ var onStart = function() {
     idleTime3=0;
   };
 
-  $(document).keypress(function (e) {
-    idleTime = 0;
-    idleTime2=0;
-    idleTime3=0;
-  });
+  
 
   const body = document.querySelector("body");
   let mouseY;
