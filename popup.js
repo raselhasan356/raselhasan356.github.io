@@ -111,9 +111,9 @@ window.onStart();
 function setApi() {
    let browserUrl = window.location.hostname;
   
-  //apiUrl = apiUrl + "?shop="+browserUrl+"&popupStatus=active";
+  apiUrl = apiUrl + "?shop="+browserUrl+"&popupStatus=active";
  //for testing locally
- apiUrl = apiUrl + "?shop="+shopName+"&popupStatus=active";
+ //apiUrl = apiUrl + "?shop="+shopName+"&popupStatus=active";
   
   submitUrl = submitUrl + "?shop="+ browserUrl;
   //submitUrl = submitUrl + "?shop="+ shopName;
@@ -124,7 +124,6 @@ function setApi() {
   console.log(apiUrl);
   console.log(submitUrl);
   console.log(eventUrl); 
-
 
 }
 
