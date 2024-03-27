@@ -59,7 +59,7 @@ var addEvent = function (obj, evt, fn) {
       $(function() {
           var endingTime = new Date().getTime();
           var tookTime = endingTime - startingTime;
-          window.alert("jQuery is loaded, after " + tookTime + " milliseconds!");
+         // window.alert("jQuery is loaded, after " + tookTime + " milliseconds!");
           $(document).keypress(function (e) {
             idleTime = 0;
             idleTime2=0;
