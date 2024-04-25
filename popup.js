@@ -240,7 +240,10 @@ function createPopup(data) {
   for (var j = 0; j < rules.length; j++) {
     if (rules[j].sequenceNumber == 1 && rules[j].status === "active") {
       setTimeout(function () {
-        showPopup(data._id);
+        if(checkUrl(data.displayTargeting.pages)){
+          showPopup(data._id);
+        }
+      
       }, rules[j].value * 1000);
       
     }
@@ -456,8 +459,11 @@ function timerIncrement() {
 
       
           if (rules[3].value==1) {
+            if(checkUrl(data.displayTargeting.pages)){
+              showPopup(inactivityPopups[i]._id);
+            }
           
-            showPopup(inactivityPopups[i]._id);
+           
           }
 
          
@@ -479,8 +485,12 @@ function timerIncrement2() {
 
         
           if (rules[3].value==3) {
+            if(checkUrl(data.displayTargeting.pages)){
+            
+              showPopup(inactivityPopups[i]._id);
+            }    
         
-            showPopup(inactivityPopups[i]._id);
+            
           }
 
         
@@ -502,8 +512,12 @@ function timerIncrement3() {
 
        
           if (rules[3].value==5) {
+
+            if(checkUrl(data.displayTargeting.pages)){
+              showPopup(inactivityPopups[i]._id);
+            }
             
-            showPopup(inactivityPopups[i]._id);
+            
           }
 
         
@@ -521,6 +535,7 @@ function showPopups(value) {
    
       
         if (scrollPopups[i].scrollPercentage ==value) {
+          if(checkUrl(scrollPopups[i].displayTargeting.pages)){
          
             showPopup(scrollPopups[i]._id);
 
@@ -537,8 +552,12 @@ function showExitPopups() {
  
   if (exitPopups.length > 0) {
     for (var i = 0; i < exitPopups.length; i++) {
-      
+      if(checkUrl(data.displayTargeting.pages)){
+
         showPopup(exitPopups[i]._id);
+      }
+       
+     
       
     }
   }
@@ -610,7 +629,7 @@ function scrollListener() {
   
   if(scrollPercent >= 25 && scrollPercent <=50){
 
-   
+      
  
       showPopups(25);
     
@@ -780,4 +799,11 @@ if (!document.getElementById(cssId))
     link.media = 'all';
     head.appendChild(link);
 }
+}
+
+function checkUrl(pages){
+
+ if(pages[0] === '/') return true;
+ return pages[0] === window.location.href;
+
 }
