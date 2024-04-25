@@ -109,8 +109,11 @@ window.onStart();
 //onload();
 
 function setApi() {
-   let browserUrl = window.location.hostname;
   
+   let browserUrl = ''
+  if(Shopify){
+      browserUrl= Shopify.shop;
+  }  
   apiUrl = apiUrl + "?shop="+browserUrl+"&popupStatus=active";
  //for testing locally
  //apiUrl = apiUrl + "?shop="+shopName+"&popupStatus=active";
