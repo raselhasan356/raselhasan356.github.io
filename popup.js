@@ -122,18 +122,13 @@ function setApi() {
   //submitUrl = submitUrl + "?shop="+ shopName;
  
   eventUrl = eventUrl + browserUrl;
- //eventUrl = eventUrl + shopName;
-  
-  console.log(apiUrl);
-  console.log(submitUrl);
-  console.log(eventUrl); 
 
 }
 
-
-
-
  
+
+
+
 
 
 
@@ -334,7 +329,7 @@ function submitEmail(id,nameMandatory,event,submit_button_id) {
 }
 
 async function getPopupInformation() {
-  console.log("called");
+  //console.log("called");
   fetch(apiUrl, {
     headers: {
       "ngrok-skip-browser-warning": true,
@@ -353,7 +348,7 @@ async function getPopupInformation() {
       return response.json();
     })
     .then((data) => {
-      console.log(JSON.stringify(data, null, 2));
+      //console.log(JSON.stringify(data, null, 2));
       popups = data.data;
 
       writeDom(popups);
