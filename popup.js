@@ -348,7 +348,7 @@ async function getPopupInformation() {
       return response.json();
     })
     .then((data) => {
-      //console.log(JSON.stringify(data, null, 2));
+      console.log(JSON.stringify(data, null, 2));
       popups = data.data;
 
       writeDom(popups);
