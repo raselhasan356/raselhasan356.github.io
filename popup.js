@@ -1,4 +1,4 @@
-var baseUrl = "https://c557-182-163-107-41.ngrok-free.app/"
+var baseUrl = "https://shopify-app.vivasoftltd.com/"
 var apiUrl = baseUrl+ "v1/popup-entity";
 var submitUrl =
   baseUrl +"v1/leads/generate-lead";
