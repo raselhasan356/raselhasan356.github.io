@@ -1,4 +1,4 @@
-var baseUrl = "http://localhost:4000/"
+var baseUrl = "http://192.168.10.188:4000/"
 var apiUrl = baseUrl+ "v1/popup-entity";
 var submitUrl =
     baseUrl +"v1/leads/generate-lead";
