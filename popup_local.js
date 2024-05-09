@@ -234,8 +234,12 @@ document.addEventListener("mouseout", (e) => {
 });
 
 window.addEventListener("load", actOnUser);
+window.addEventListener('load', function() {
+    console.log('All assets loaded')
+});
 
 function actOnUser(event){
+    console.log('actonUser');
     if (ShopifyAnalytics && ShopifyAnalytics.lib && ShopifyAnalytics.lib.user) {
       console.log("Clientid=", ShopifyAnalytics.lib.user().traits().uniqToken); // Do your work here.
     } else {
