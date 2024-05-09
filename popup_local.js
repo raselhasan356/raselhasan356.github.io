@@ -86,7 +86,11 @@ var onStart = function() {
 
     var throttledListener = throttle(scrollListener, 2000);
     window.addEventListener('scroll', throttledListener);
-
+    window.addEventListener("load", actOnUser);
+    window.addEventListener('load', function() {
+        console.log('All assets loaded')
+    });
+    
 
     document.onmousemove = function (e) {
         idleTime = 0;
@@ -233,10 +237,6 @@ document.addEventListener("mouseout", (e) => {
     }
 });
 
-window.addEventListener("load", actOnUser);
-window.addEventListener('load', function() {
-    console.log('All assets loaded')
-});
 
 function actOnUser(event){
     console.log('actonUser');
