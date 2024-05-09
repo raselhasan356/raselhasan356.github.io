@@ -86,10 +86,6 @@ var onStart = function() {
 
     var throttledListener = throttle(scrollListener, 2000);
     window.addEventListener('scroll', throttledListener);
-    window.addEventListener("load", actOnUser);
-    window.addEventListener('load', function() {
-        console.log('All assets loaded')
-    });
     
 
     document.onmousemove = function (e) {
@@ -251,7 +247,7 @@ document.addEventListener('readystatechange', event => {
 });
 
 
-function actOnUser(event){
+window.onload = function (){
     console.log('actonUser');
     if (ShopifyAnalytics && ShopifyAnalytics.lib && ShopifyAnalytics.lib.user) {
       console.log("Clientid=", ShopifyAnalytics.lib.user().traits().uniqToken); // Do your work here.
