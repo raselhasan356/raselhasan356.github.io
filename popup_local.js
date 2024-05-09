@@ -228,7 +228,7 @@ function createPopup(data) {
 
 document.addEventListener("mouseout", (e) => {
     if (!e.toElement && !e.relatedTarget) {
-        console.log('exit intent')
+        console.log('exit intent pop-up test')
         showExitPopups();
     }
 });
