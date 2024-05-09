@@ -233,6 +233,22 @@ document.addEventListener("mouseout", (e) => {
     }
 });
 
+window.addEventListener("load", actOnUser);
+
+function actOnUser(event){
+    if (ShopifyAnalytics && ShopifyAnalytics.lib && ShopifyAnalytics.lib.user) {
+      console.log("Clientid=", ShopifyAnalytics.lib.user().traits().uniqToken); // Do your work here.
+    } else {
+    //   if (retry > 0) {
+    //     setTimeout(function() {
+    //       func(retry - 1, func);
+    //     }, 1000);
+    //   }
+      console.log('User not ready'); // Can be removed - just for debug
+    }
+  }
+  
+
 function submitEmail(id,nameMandatory,event,submit_button_id) {
     event.preventDefault();
     console.log("inside submit");
